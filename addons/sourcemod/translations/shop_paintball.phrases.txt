@@ -1,0 +1,23 @@
+﻿"Phrases"
+{
+	"display"
+	{
+		"en"			"Stuff"
+		"ru"			"Дополнительно"
+	}
+	"description"
+	{
+		"en"			"Some stuff"
+		"ru"			"Всякие вещи"
+	}
+	"paintball"
+	{
+		"en"			"Paintball"
+		"ru"			"Пэйнтбол"
+	}
+	"paintball_description"
+	{
+		"en"			"Paintball on bullets impact"
+		"ru"			"Пэйнтбол на выстрелах ууль"
+	}
+}

@@ -1,0 +1,4 @@
+materials/decals/concrete/shot1_paint.vmt
+materials/decals/concrete/shot2_paint.vmt
+materials/decals/concrete/shot3_paint.vmt
+materials/decals/concrete/shot5_paint.vmt
