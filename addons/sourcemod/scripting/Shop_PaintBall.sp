@@ -85,7 +85,7 @@ public OnPluginEnd()
 
 public Shop_Started()
 {
-	new CategoryId:category_id = Shop_RegisterCategory(CATEGORY, "Stuff", "", OnCategoryDisplay, OnCategoryDescription);
+	new CategoryId:category_id = Shop_RegisterCategory(CATEGORY, "PaintBall", "", OnCategoryDisplay, OnCategoryDescription);
 	if (Shop_StartItem(category_id, ITEM))
 	{
 		Shop_SetInfo("Paintball", "", g_iPrice, g_iSellPrice, Item_Togglable, g_iDuration);

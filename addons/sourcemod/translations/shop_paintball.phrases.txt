@@ -2,12 +2,12 @@
 {
 	"display"
 	{
-		"en"			"Stuff"
+		"en"			"PaintBall"
 		"ru"			"Дополнительно"
 	}
 	"description"
 	{
-		"en"			"Some stuff"
+		"en"			"PaintBall bullets"
 		"ru"			"Всякие вещи"
 	}
 	"paintball"
