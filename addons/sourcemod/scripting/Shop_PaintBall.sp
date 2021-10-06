@@ -85,7 +85,7 @@ public OnPluginEnd()
 
 public Shop_Started()
 {
-	new CategoryId:category_id = Shop_RegisterCategory(CATEGORY, "PaintBall", "", OnCategoryDisplay, OnCategoryDescription);
+	new CategoryId:category_id = Shop_RegisterCategory(CATEGORY, "PaintBall", "Shoot colored bullets", OnCategoryDisplay, OnCategoryDescription);
 	if (Shop_StartItem(category_id, ITEM))
 	{
 		Shop_SetInfo("Paintball", "", g_iPrice, g_iSellPrice, Item_Togglable, g_iDuration);
@@ -94,13 +94,13 @@ public Shop_Started()
 	}
 }
 
-public bool:OnCategoryDisplay(client, CategoryId:category_id, const String:category[], const String:name[], String:buffer[], maxlen)
+public bool OnCategoryDisplaybool(int client, CategoryId category_id, const char[] category, const char[] name, char[] buffer, int maxlen, ShopMenu menu)
 {
 	FormatEx(buffer, maxlen, "%T", "display", client);
 	return true;
 }
 
-public bool:OnCategoryDescription(client, CategoryId:category_id, const String:category[], const String:description[], String:buffer[], maxlen)
+public bool OnCategoryDescription(int client, CategoryId category_id, const char[] category, const char[] description, char[] buffer, int maxlen, ShopMenu menu)
 {
 	FormatEx(buffer, maxlen, "%T", "description", client);
 	return true;
