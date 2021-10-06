@@ -94,7 +94,7 @@ public Shop_Started()
 	}
 }
 
-public bool OnCategoryDisplaybool(int client, CategoryId category_id, const char[] category, const char[] name, char[] buffer, int maxlen, ShopMenu menu)
+public bool OnCategoryDisplay(int client, CategoryId category_id, const char[] category, const char[] name, char[] buffer, int maxlen, ShopMenu menu)
 {
 	FormatEx(buffer, maxlen, "%T", "display", client);
 	return true;
