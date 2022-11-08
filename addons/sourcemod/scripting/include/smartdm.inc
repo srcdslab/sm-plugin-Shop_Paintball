@@ -3,21 +3,21 @@
 
 #define STRING(%1) %1, sizeof(%1)
 
-stock Downloader_ParseMDL(const String:model[], String:internal[], maxlen1, String:files[][], maxsize, maxlen2)
+stock int Downloader_ParseMDL(const char[] model, char[] internal, int maxlen1, char[][] files, int maxsize, int maxlen2)
 {
 	if(!FileExists2(model))
 		return 0;
 
-	new m_iID;
-	new m_iVersion;
-	new m_iNum = 0;
-	new m_iDirNum = 0;
-	new m_iOffset = 0;
-	new m_iDirOffset = 0;
-	new m_iNameOffset = 0;
-	new m_iIdx = 0;
+	int m_iID;
+	int m_iVersion;
+	int m_iNum = 0;
+	int m_iDirNum = 0;
+	int m_iOffset = 0;
+	int m_iDirOffset = 0;
+	int m_iNameOffset = 0;
+	int m_iIdx = 0;
 
-	new Handle:m_hFile = OpenFile2(model, "rb");
+	Handle m_hFile = OpenFile2(model, "rb");
 	if(m_hFile==INVALID_HANDLE)
 		return 0;
 
@@ -32,7 +32,7 @@ stock Downloader_ParseMDL(const String:model[], String:internal[], maxlen1, Stri
 	ReadFileCell(m_hFile, m_iDirNum, 4);
 	ReadFileCell(m_hFile, m_iDirOffset, 4);
 
-	new String:m_szPath[PLATFORM_MAX_PATH];
+	char m_szPath[PLATFORM_MAX_PATH];
 	if(m_iDirNum!=0)
 	{
 		FileSeek(m_hFile, m_iDirOffset, SEEK_SET);
@@ -41,7 +41,7 @@ stock Downloader_ParseMDL(const String:model[], String:internal[], maxlen1, Stri
 		ReadFileString(m_hFile, STRING(m_szPath));
 	}
 
-	new String:m_szMaterial[PLATFORM_MAX_PATH];
+	char m_szMaterial[PLATFORM_MAX_PATH];
 	for(m_iIdx=0;m_iIdx<m_iNum;++m_iIdx)
 	{
 		FileSeek(m_hFile, m_iOffset+m_iIdx*64, SEEK_SET);
@@ -55,15 +55,15 @@ stock Downloader_ParseMDL(const String:model[], String:internal[], maxlen1, Stri
 	return m_iNum;
 }
 
-new String:g_szModelExts[][16] = {".phy", ".sw.vtx", ".dx80.vtx", ".dx90.vtx", ".vtx", ".xbox.vtx", ".vvd"};
-stock Downloader_GetModelFiles(const String:model[], const String:internal[], String:files[][], maxsize, maxlen)
+char g_szModelExts[][16] = {".phy", ".sw.vtx", ".dx80.vtx", ".dx90.vtx", ".vtx", ".xbox.vtx", ".vvd"};
+stock int Downloader_GetModelFiles(const char[] model, const char[] internal, char[][] files, int maxsize, int maxlen)
 {
-	decl String:m_szRawPath1[PLATFORM_MAX_PATH];
-	decl String:m_szRawPath2[PLATFORM_MAX_PATH];
+	char m_szRawPath1[PLATFORM_MAX_PATH];
+	char m_szRawPath2[PLATFORM_MAX_PATH];
 	strcopy(STRING(m_szRawPath1), model);
 	Format(STRING(m_szRawPath2), "models/%s", internal);
 
-	new m_iDot = FindCharInString(m_szRawPath1, '.', true);
+	int m_iDot = FindCharInString(m_szRawPath1, '.', true);
 	if(m_iDot == -1)
 		return 0;
 	m_szRawPath1[m_iDot] = 0;
@@ -73,8 +73,8 @@ stock Downloader_GetModelFiles(const String:model[], const String:internal[], St
 		return 0;
 	m_szRawPath2[m_iDot] = 0;
 
-	new m_iNum = 0;
-	for(new i=0;i<sizeof(g_szModelExts);++i)
+	int m_iNum = 0;
+	for(int i=0;i<sizeof(g_szModelExts);++i)
 	{
 		if(m_iNum == maxsize)
 			break;
@@ -91,26 +91,26 @@ stock Downloader_GetModelFiles(const String:model[], const String:internal[], St
 	return m_iNum;
 }
 
-new String:g_szMaterialKeys[][64] = {"$baseTexture", "$bumpmap", "$lightwarptexture"};
-stock Downloader_GetMaterialsFromVMT(const String:vmt[], String:materials[][], maxsize, maxlen)
+char g_szMaterialKeys[][64] = {"$baseTexture", "$bumpmap", "$lightwarptexture"};
+stock int Downloader_GetMaterialsFromVMT(const char[] vmt, char[][] materials, int maxsize, int maxlen)
 {
 	if(!FileExists2(vmt))
 		return 0;
 
-	decl String:m_szLine[512];
+	char m_szLine[512];
 
-	new Handle:m_hFile = OpenFile2(vmt, "r");
+	Handle m_hFile = OpenFile2(vmt, "r");
 	
-	new bool:m_bFound[sizeof(g_szMaterialKeys)];
-	decl m_iPos;
-	decl m_iLast;
-	new m_iNum = 0;
+	bool m_bFound[sizeof(g_szMaterialKeys)];
+	int m_iPos;
+	int m_iLast;
+	int m_iNum = 0;
 	while(ReadFileLine(m_hFile, m_szLine, sizeof(m_szLine))!=false)
 	{
 		if(m_iNum == sizeof(g_szMaterialKeys) || maxsize == m_iNum)
 			break;
 
-		for(new i=0;i<sizeof(g_szMaterialKeys);++i)
+		for(int i=0;i<sizeof(g_szMaterialKeys);++i)
 		{
 			if(m_bFound[i])
 				continue;
@@ -136,9 +136,9 @@ stock Downloader_GetMaterialsFromVMT(const String:vmt[], String:materials[][], m
 	return m_iNum;
 }
 
-new Handle:g_hCachedFiles = INVALID_HANDLE;
-new Handle:g_hCachedNums = INVALID_HANDLE;
-stock Downloader_AddFileToDownloadsTable(const String:filename[])
+Handle g_hCachedFiles = INVALID_HANDLE;
+Handle g_hCachedNums = INVALID_HANDLE;
+stock int Downloader_AddFileToDownloadsTable(const char[] filename)
 {
 	if(!FileExists2(filename))
 		return 0;
@@ -151,12 +151,12 @@ stock Downloader_AddFileToDownloadsTable(const String:filename[])
 
 	AddFileToDownloadsTable(filename);
 
-	decl m_iValue;
+	int m_iValue;
 	if(GetTrieValue(g_hCachedNums, filename, m_iValue))
 	{
-		new m_iStart = FindStringInArray(g_hCachedFiles, filename)+1;
-		decl String:m_szFile[PLATFORM_MAX_PATH];
-		for(new i=m_iStart-m_iValue-1;i<m_iStart-1;++i)
+		int m_iStart = FindStringInArray(g_hCachedFiles, filename)+1;
+		char m_szFile[PLATFORM_MAX_PATH];
+		for(int i=m_iStart-m_iValue-1;i<m_iStart-1;++i)
 		{
 			if(i<0)
 				break;
@@ -166,36 +166,36 @@ stock Downloader_AddFileToDownloadsTable(const String:filename[])
 		return true;
 	}
 
-	decl String:m_szExt[16];
-	new m_iDot = FindCharInString(filename, '.', true);
+	char m_szExt[16];
+	int m_iDot = FindCharInString(filename, '.', true);
 	if(m_iDot == -1)
 		return true;
 
-	new m_iNumFiles = 0;
+	int m_iNumFiles = 0;
 
 	strcopy(m_szExt, sizeof(m_szExt), filename[m_iDot]);
-	decl String:m_szMaterials[8][PLATFORM_MAX_PATH];
-	decl m_iNum;
+	char m_szMaterials[8][PLATFORM_MAX_PATH];
+	int m_iNum;
 	if(strcmp(m_szExt, ".mdl") == 0)
 	{
-		decl String:m_szFiles[sizeof(g_szModelExts)][PLATFORM_MAX_PATH];
-		new String:m_szInternal[64];
+		char m_szFiles[sizeof(g_szModelExts)][PLATFORM_MAX_PATH];
+		char m_szInternal[64];
 
 		m_iNum = Downloader_ParseMDL(filename, STRING(m_szInternal), m_szMaterials, sizeof(m_szMaterials), sizeof(m_szMaterials[]));
-		for(new i=0;i<m_iNum;++i)
+		for(int i=0;i<m_iNum;++i)
 		{
 			if(FileExists2(m_szMaterials[i]))
 				m_iNumFiles += Downloader_AddFileToDownloadsTable(m_szMaterials[i])+1;
 		}
 
 		m_iNum = Downloader_GetModelFiles(filename, m_szInternal, m_szFiles, sizeof(m_szFiles), sizeof(m_szFiles[]));
-		for(new i=0;i<m_iNum;++i)
+		for(int i=0;i<m_iNum;++i)
 			m_iNumFiles += Downloader_AddFileToDownloadsTable(m_szFiles[i])+1;
 	} else if(strcmp(m_szExt, ".vmt") == 0)
 	{
 		m_iNum = Downloader_GetMaterialsFromVMT(filename, m_szMaterials, sizeof(m_szMaterials), sizeof(m_szMaterials[]));
-		decl String:m_szMaterial[PLATFORM_MAX_PATH];
-		for(new i=0;i<m_iNum;++i)
+		char m_szMaterial[PLATFORM_MAX_PATH];
+		for(int i=0;i<m_iNum;++i)
 		{
 			Format(m_szMaterial, sizeof(m_szMaterial), "materials\\%s.vtf", m_szMaterials[i]);
 			if(FileExists2(m_szMaterial))
@@ -209,19 +209,19 @@ stock Downloader_AddFileToDownloadsTable(const String:filename[])
 	return m_iNumFiles;
 }
 
-new Handle:g_hCustomFiles = INVALID_HANDLE;
+Handle g_hCustomFiles = INVALID_HANDLE;
 
-public CacheCustomDirectory()
+public void CacheCustomDirectory()
 {
 	g_hCustomFiles = CreateTrie();
 
-	new Handle:m_hDir = OpenDirectory("custom");
+	Handle m_hDir = OpenDirectory("custom");
 	if(m_hDir == INVALID_HANDLE)
 		return;
 
-	new String:m_szDirectory[PLATFORM_MAX_PATH] = "custom/";
-	decl FileType:m_eType;
-	new m_unLen = strlen(m_szDirectory);
+	char m_szDirectory[PLATFORM_MAX_PATH] = "custom/";
+	FileType m_eType;
+	int m_unLen = strlen(m_szDirectory);
 
 	while(ReadDirEntry(m_hDir, m_szDirectory[m_unLen], sizeof(m_szDirectory)-m_unLen, m_eType))
 	{
@@ -236,14 +236,14 @@ public CacheCustomDirectory()
 	CloseHandle(m_hDir);
 }
 
-public CacheDirectory(const String:directory[])
+public void CacheDirectory(const char[] directory)
 {
-	new Handle:m_hDir = OpenDirectory(directory);
-	decl String:m_szPath[PLATFORM_MAX_PATH];
-	decl FileType:m_eType;
+	Handle m_hDir = OpenDirectory(directory);
+	char m_szPath[PLATFORM_MAX_PATH];
+	FileType m_eType;
 	Format(STRING(m_szPath), "%s/", directory);
-	new m_unLen = strlen(m_szPath);
-	new m_unOffset = FindCharInString(m_szPath, '/')+1;
+	int m_unLen = strlen(m_szPath);
+	int m_unOffset = FindCharInString(m_szPath, '/')+1;
 	m_unOffset += FindCharInString(m_szPath[m_unOffset], '/')+1;
 
 	while(ReadDirEntry(m_hDir, m_szPath[m_unLen], sizeof(m_szPath)-m_unLen, m_eType))
@@ -261,12 +261,12 @@ public CacheDirectory(const String:directory[])
 	CloseHandle(m_hDir);
 }
 
-stock Handle:OpenFile2(const String:file[], const String:mode[])
+stock Handle OpenFile2(const char[] file, const char[] mode)
 {
 	if(g_hCustomFiles == INVALID_HANDLE)
 		CacheCustomDirectory();
 
-	decl String:m_szPath[PLATFORM_MAX_PATH];
+	char m_szPath[PLATFORM_MAX_PATH];
 	if(!GetTrieString(g_hCustomFiles, file, STRING(m_szPath)))
 	{
 		strcopy(STRING(m_szPath), file);
@@ -275,12 +275,12 @@ stock Handle:OpenFile2(const String:file[], const String:mode[])
 	return OpenFile(m_szPath, mode);
 }
 
-stock bool:FileExists2(const String:file[])
+stock bool FileExists2(const char[] file)
 {
 	if(g_hCustomFiles == INVALID_HANDLE)
 		CacheCustomDirectory();
 
-	decl String:m_szPath[PLATFORM_MAX_PATH];
+	char m_szPath[PLATFORM_MAX_PATH];
 	if(!GetTrieString(g_hCustomFiles, file, STRING(m_szPath)))
 		return FileExists(file);
 
