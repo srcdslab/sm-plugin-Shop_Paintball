@@ -3,10 +3,10 @@
 
 #include <sourcemod>
 #include <sdktools>
+
 #include <smartdm>
 #include <shop>
 
-#define PLUGIN_VERSION	"2.1.2"
 #define CATEGORY	"stuff"
 #define ITEM	"paintball"
 
@@ -24,14 +24,22 @@ int g_iPrice
 
 ItemId id;
 
+bool g_bLate = false;
+
 public Plugin myinfo =
 {
 	name		= "[Shop] PaintBall",
 	author		= "FrozDark (HLModders LLC)",
 	description = "Paintball component for Shop",
-	version		= PLUGIN_VERSION,
+	version		= "2.1.2",
 	url			 = "www.hlmod.ru"
 };
+
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
+{
+	g_bLate = late;
+	return APLRes_Success;
+}
 
 public void OnPluginStart()
 {
@@ -54,7 +62,10 @@ public void OnPluginStart()
 	AutoExecConfig(true, "shop_paintball", "shop");
 	LoadTranslations("shop_paintball.phrases");
 	
-	if (Shop_IsStarted()) Shop_Started();
+	if (g_bLate && Shop_IsStarted())
+	{
+		Shop_Started();
+	}
 }
 
 public void OnConVarChange(ConVar convar, const char[] oldValue, const char[] newValue)
@@ -234,11 +245,11 @@ public void Event_BulletImpact(Event event, const char[] weaponName, bool dontBr
 	CloseHandle(trace);*/
 }
 
-stock bool TE_SetupWorldDecal(const float vecOrigin[3], int index)
+stock void TE_SetupWorldDecal(const float vecOrigin[3], int index)
 {    
     TE_Start("World Decal");
-    TE_WriteVector("m_vecOrigin",vecOrigin);
-    TE_WriteNum("m_nIndex",index);
+    TE_WriteVector("m_vecOrigin", vecOrigin);
+    TE_WriteNum("m_nIndex", index);
 }
 
 public bool TraceEntityFilterPlayer(int entity, int contentsMask) 
