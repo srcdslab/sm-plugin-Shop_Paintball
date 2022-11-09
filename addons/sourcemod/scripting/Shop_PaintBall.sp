@@ -1,23 +1,30 @@
 #pragma semicolon 1
+#pragma newdecls required
 
 #include <sourcemod>
 #include <sdktools>
 #include <smartdm>
 #include <shop>
 
-#define PLUGIN_VERSION	"2.1.1"
+#define PLUGIN_VERSION	"2.1.2"
 #define CATEGORY	"stuff"
 #define ITEM	"paintball"
 
-new g_clientsPaintballEnabled[MAXPLAYERS+1];
-new Handle:g_hPrice, g_iPrice;
-new Handle:g_hSellPrice, g_iSellPrice;
-new Handle:g_hDuration, g_iDuration;
-new Handle:g_hArrayMaterials;
+bool g_clientsPaintballEnabled[MAXPLAYERS + 1];
 
-new ItemId:id;
+ConVar g_hPrice
+	, g_hSellPrice
+	, g_hDuration;
 
-public Plugin:myinfo =
+ArrayList g_hArrayMaterials;
+
+int g_iPrice
+	, g_iSellPrice
+	, g_iDuration;
+
+ItemId id;
+
+public Plugin myinfo =
 {
 	name		= "[Shop] PaintBall",
 	author		= "FrozDark (HLModders LLC)",
@@ -26,7 +33,7 @@ public Plugin:myinfo =
 	url			 = "www.hlmod.ru"
 };
 
-public OnPluginStart()
+public void OnPluginStart()
 {
 	g_hPrice = CreateConVar("sm_shop_paintball_price", "500", "Price for the paintball.");
 	g_iPrice = GetConVarInt(g_hPrice);
@@ -50,7 +57,7 @@ public OnPluginStart()
 	if (Shop_IsStarted()) Shop_Started();
 }
 
-public OnConVarChange(Handle:convar, const String:oldValue[], const String:newValue[])
+public void OnConVarChange(ConVar convar, const char[] oldValue, const char[] newValue)
 {
 	if (convar == g_hPrice)
 	{
@@ -78,14 +85,14 @@ public OnConVarChange(Handle:convar, const String:oldValue[], const String:newVa
 	}
 }
 
-public OnPluginEnd()
+public void OnPluginEnd()
 {
 	Shop_UnregisterMe();
 }
 
-public Shop_Started()
+public void Shop_Started()
 {
-	new CategoryId:category_id = Shop_RegisterCategory(CATEGORY, "PaintBall", "Shoot colored bullets", OnCategoryDisplay, OnCategoryDescription);
+	CategoryId category_id = Shop_RegisterCategory(CATEGORY, "PaintBall", "Shoot colored bullets", OnCategoryDisplay, OnCategoryDescription);
 	if (Shop_StartItem(category_id, ITEM))
 	{
 		Shop_SetInfo("Paintball", "", g_iPrice, g_iSellPrice, Item_Togglable, g_iDuration);
@@ -106,29 +113,29 @@ public bool OnCategoryDescription(int client, CategoryId category_id, const char
 	return true;
 }
 
-public OnItemRegistered(CategoryId:category_id, const String:category[], const String:item[], ItemId:item_id)
+public void OnItemRegistered(CategoryId category_id, const char[] category, const char[] item, ItemId item_id)
 {
 	id = item_id;
 }
 
-public bool:OnDisplay(client, CategoryId:category_id, const String:category[], ItemId:item_id, const String:item[], ShopMenu:menu, &bool:disabled, const String:name[], String:buffer[], maxlen)
+public bool OnDisplay(int client, CategoryId category_id, const char[] category, ItemId item_id, const char[] item, ShopMenu menu, bool &disabled, const char[] name, char[] buffer, int maxlen)
 {
 	FormatEx(buffer, maxlen, "%T", "paintball", client);
 	return true;
 }
 
-public bool:OnDescription(client, CategoryId:category_id, const String:category[], ItemId:item_id, const String:item[], ShopMenu:menu, const String:description[], String:buffer[], maxlen)
+public bool OnDescription(int client, CategoryId category_id, const char[] category, ItemId item_id, const char[] item, ShopMenu menu, const char[] description, char[] buffer, int maxlen)
 {
 	FormatEx(buffer, maxlen, "%T", "paintball_description", client);
 	return true;
 }
 
-public OnMapStart()
+public void OnMapStart()
 {
-	decl String:buffer[PLATFORM_MAX_PATH];
+	char buffer[PLATFORM_MAX_PATH];
 	Shop_GetCfgFile(buffer, sizeof(buffer), "paintball.txt");
 	
-	new Handle:filehandle = OpenFile(buffer, "r");
+	Handle filehandle = OpenFile(buffer, "r");
 	
 	if (filehandle == INVALID_HANDLE)
 	{
@@ -142,7 +149,7 @@ public OnMapStart()
 		if (!ReadFileLine(filehandle,buffer,sizeof(buffer)))
 			continue;
 	
-		new pos;
+		int pos;
 		pos = StrContains((buffer), "//");
 		if (pos != -1)
 		{
@@ -173,12 +180,12 @@ public OnMapStart()
 	}
 }
 
-public OnClientDisconnect_Post(client)
+public void OnClientDisconnect(int client)
 {
 	g_clientsPaintballEnabled[client] = false;
 }
 
-public ShopAction:OnPaintballUsed(client, CategoryId:category_id, const String:category[], ItemId:item_id, const String:item[], bool:isOn, bool:elapsed)
+public ShopAction OnPaintballUsed(int client, CategoryId category_id, const char[] category, ItemId item_id, const char[] item, bool isOn, bool elapsed)
 {
 	g_clientsPaintballEnabled[client] = !isOn;
 	if (isOn || elapsed)
@@ -188,26 +195,26 @@ public ShopAction:OnPaintballUsed(client, CategoryId:category_id, const String:c
 	return Shop_UseOn;
 }
 
-public Event_BulletImpact(Handle:event, const String:weaponName[], bool:dontBroadcast)
+public void Event_BulletImpact(Event event, const char[] weaponName, bool dontBroadcast)
 {
-	new client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	
  	if (!client || !g_clientsPaintballEnabled[client])
 	{
 		return;
 	}
-	new size = GetArraySize(g_hArrayMaterials);
+	int size = GetArraySize(g_hArrayMaterials);
 	if (!size)
 	{
 		return;
 	}
 	
-	decl Float:bulletDestination[3];//, Float:ang[3];
+	float bulletDestination[3];//, Float:ang[3];
 	bulletDestination[0] = GetEventFloat(event, "x");
 	bulletDestination[1] = GetEventFloat(event, "y");
 	bulletDestination[2] = GetEventFloat(event, "z");
 	
-	new index = GetArrayCell(g_hArrayMaterials, Math_GetRandomInt(0, size-1));
+	int index = GetArrayCell(g_hArrayMaterials, Math_GetRandomInt(0, size-1));
 	TE_SetupWorldDecal(bulletDestination, index);
 	TE_SendToAll();
 	
@@ -227,26 +234,26 @@ public Event_BulletImpact(Handle:event, const String:weaponName[], bool:dontBroa
 	CloseHandle(trace);*/
 }
 
-stock TE_SetupWorldDecal(const Float:vecOrigin[3], index)
+stock bool TE_SetupWorldDecal(const float vecOrigin[3], int index)
 {    
     TE_Start("World Decal");
     TE_WriteVector("m_vecOrigin",vecOrigin);
     TE_WriteNum("m_nIndex",index);
 }
 
-public bool:TraceEntityFilterPlayer(entity, contentsMask) 
+public bool TraceEntityFilterPlayer(int entity, int contentsMask) 
 {
  	return (entity < 1 && entity > MaxClients);
 }
 
-stock Math_GetRandomInt(min, max)
+stock int Math_GetRandomInt(int min, int max)
 {
-	new random = GetURandomInt();
+	int random = GetURandomInt();
 	
 	if (!random)
 		random++;
 		
-	new number = RoundToCeil(float(random) / (float(2147483647) / float(max - min + 1))) + min - 1;
+	int number = RoundToCeil(float(random) / (float(2147483647) / float(max - min + 1))) + min - 1;
 	
 	return number;
 }
