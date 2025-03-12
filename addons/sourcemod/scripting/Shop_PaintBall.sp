@@ -31,7 +31,7 @@ public Plugin myinfo =
 	name		= "[Shop] PaintBall",
 	author		= "FrozDark (HLModders LLC)",
 	description = "Paintball component for Shop",
-	version		= "2.1.2",
+	version		= "2.1.3",
 	url			 = "www.hlmod.ru"
 };
 

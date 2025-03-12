@@ -3,7 +3,7 @@
 
 #define STRING(%1) %1, sizeof(%1)
 
-stock int Downloader_ParseMDL(const char[] model, char[] internal, int maxlen1, char[][] files, int maxsize, int maxlen2)
+stock int Downloader_ParseMDL(const char[] model, char[] internal, int maxlen1, char[][] files, int maxlen2)
 {
 	if(!FileExists2(model))
 		return 0;
@@ -181,7 +181,7 @@ stock int Downloader_AddFileToDownloadsTable(const char[] filename)
 		char m_szFiles[sizeof(g_szModelExts)][PLATFORM_MAX_PATH];
 		char m_szInternal[64];
 
-		m_iNum = Downloader_ParseMDL(filename, STRING(m_szInternal), m_szMaterials, sizeof(m_szMaterials), sizeof(m_szMaterials[]));
+		m_iNum = Downloader_ParseMDL(filename, STRING(m_szInternal), m_szMaterials, sizeof(m_szMaterials[]));
 		for(int i=0;i<m_iNum;++i)
 		{
 			if(FileExists2(m_szMaterials[i]))
