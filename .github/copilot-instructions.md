@@ -13,15 +13,15 @@ This repository contains a **SourceMod plugin** that provides paintball function
 - **Custom Include**: `addons/sourcemod/scripting/include/smartdm.inc` (model parsing utilities)
 - **Configuration**: `addons/sourcemod/configs/paintball.txt` (paintball material paths)
 - **Translations**: `addons/sourcemod/translations/shop_paintball.phrases.txt` (EN/RU support)
-- **Build Config**: `sourceknight.yaml` (SourceKnight build system)
+- **Build Config**: `.github/workflows/ci.yml` (native GitHub Actions build)
 
 ## Technical Stack & Dependencies
 
 ### Core Technologies
 - **Language**: SourcePawn (SourceMod scripting language)
-- **Platform**: SourceMod 1.11.0+ (minimum supported version)
-- **Build Tool**: SourceKnight (Python-based SourceMod build system)
-- **Compiler**: SourcePawn Compiler (spcomp)
+- **Platform**: SourceMod 1.12.x
+- **Build Tool**: GitHub Actions (native workflow, no external build tool)
+- **Compiler**: SourcePawn Compiler (spcomp, via rumblefrog/setup-sp)
 
 ### External Dependencies
 - **SourceMod Framework**: Base modding platform for Source engine games
@@ -49,7 +49,6 @@ This repository contains a **SourceMod plugin** that provides paintball function
 │   ├── configs/paintball.txt    # Material file paths
 │   └── translations/
 │       └── shop_paintball.phrases.txt  # Localization
-├── sourceknight.yaml            # Build configuration
 └── .gitignore                   # Git ignore rules
 ```
 
@@ -57,18 +56,12 @@ This repository contains a **SourceMod plugin** that provides paintball function
 
 ### Building the Plugin
 
-1. **Using SourceKnight** (Recommended):
-   ```bash
-   # Install SourceKnight
-   pip install sourceknight
-   
-   # Build the plugin
-   sourceknight build
-   ```
+1. **CI (Recommended)**: Push or open a PR — `.github/workflows/ci.yml` installs SourceMod 1.12.x via `rumblefrog/setup-sp`, fetches the `Shop-Core` include dependency, and compiles the plugin automatically.
 
 2. **Manual Compilation**:
    ```bash
-   # Requires SourceMod compiler in PATH
+   # Requires SourceMod compiler in PATH and Shop-Core includes copied into
+   # addons/sourcemod/scripting/include
    spcomp -i"addons/sourcemod/scripting/include" addons/sourcemod/scripting/Shop_PaintBall.sp
    ```
 
@@ -245,7 +238,7 @@ Error: Undefined symbol "Shop_RegisterCategory"
 - **Plugin Logic**: `Shop_PaintBall.sp`
 - **Materials**: `paintball.txt`
 - **Text/UI**: `shop_paintball.phrases.txt`
-- **Build Config**: `sourceknight.yaml`
+- **Build Config**: `.github/workflows/ci.yml`
 
 ### Important Functions
 - `OnPluginStart()`: Initialization and ConVar setup
