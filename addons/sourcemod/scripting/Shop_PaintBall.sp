@@ -31,7 +31,7 @@ public Plugin myinfo =
 	name		= "[Shop] PaintBall",
 	author		= "FrozDark (HLModders LLC)",
 	description = "Paintball component for Shop",
-	version		= "2.1.3",
+	version		= "2.1.4",
 	url			 = "www.hlmod.ru"
 };
 
@@ -44,18 +44,18 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 public void OnPluginStart()
 {
 	g_hPrice = CreateConVar("sm_shop_paintball_price", "500", "Price for the paintball.");
-	g_iPrice = GetConVarInt(g_hPrice);
-	HookConVarChange(g_hPrice, OnConVarChange);
+	g_iPrice = g_hPrice.IntValue;
+	g_hPrice.AddChangeHook(OnConVarChange);
 	
 	g_hSellPrice = CreateConVar("sm_shop_paintball_sellprice", "250", "Sell price for the paintball. -1 to make unsaleable");
-	g_iSellPrice = GetConVarInt(g_hSellPrice);
-	HookConVarChange(g_hSellPrice, OnConVarChange);
+	g_iSellPrice = g_hSellPrice.IntValue;
+	g_hSellPrice.AddChangeHook(OnConVarChange);
 	
 	g_hDuration = CreateConVar("sm_shop_paintball_duration", "86400", "The paintball duration. 0 to make it forever");
-	g_iDuration = GetConVarInt(g_hDuration);
-	HookConVarChange(g_hDuration, OnConVarChange);
+	g_iDuration = g_hDuration.IntValue;
+	g_hDuration.AddChangeHook(OnConVarChange);
 	
-	g_hArrayMaterials = CreateArray();
+	g_hArrayMaterials = new ArrayList();
 	
 	HookEvent("bullet_impact", Event_BulletImpact);	
 	
@@ -146,18 +146,18 @@ public void OnMapStart()
 	char buffer[PLATFORM_MAX_PATH];
 	Shop_GetCfgFile(buffer, sizeof(buffer), "paintball.txt");
 	
-	Handle filehandle = OpenFile(buffer, "r");
+	File filehandle = OpenFile(buffer, "r");
 	
-	if (filehandle == INVALID_HANDLE)
+	if (filehandle == null)
 	{
 		ThrowError("%s not parsed... file doesn't exist!", buffer);
 	}
 	
-	ClearArray(g_hArrayMaterials);
+	g_hArrayMaterials.Clear();
 		
-	while (!IsEndOfFile(filehandle))
+	while (!filehandle.EndOfFile())
 	{
-		if (!ReadFileLine(filehandle,buffer,sizeof(buffer)))
+		if (!filehandle.ReadLine(buffer, sizeof(buffer)))
 			continue;
 	
 		int pos;
@@ -187,7 +187,7 @@ public void OnMapStart()
 		}
 		
 		Downloader_AddFileToDownloadsTable(buffer);
-		PushArrayCell(g_hArrayMaterials, PrecacheDecal(buffer[10]));
+		g_hArrayMaterials.Push(PrecacheDecal(buffer[10]));
 	}
 }
 
@@ -208,24 +208,24 @@ public ShopAction OnPaintballUsed(int client, CategoryId category_id, const char
 
 public void Event_BulletImpact(Event event, const char[] weaponName, bool dontBroadcast)
 {
-	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int client = GetClientOfUserId(event.GetInt("userid"));
 	
  	if (!client || !g_clientsPaintballEnabled[client])
 	{
 		return;
 	}
-	int size = GetArraySize(g_hArrayMaterials);
+	int size = g_hArrayMaterials.Length;
 	if (!size)
 	{
 		return;
 	}
 	
 	float bulletDestination[3];//, Float:ang[3];
-	bulletDestination[0] = GetEventFloat(event, "x");
-	bulletDestination[1] = GetEventFloat(event, "y");
-	bulletDestination[2] = GetEventFloat(event, "z");
+	bulletDestination[0] = event.GetFloat("x");
+	bulletDestination[1] = event.GetFloat("y");
+	bulletDestination[2] = event.GetFloat("z");
 	
-	int index = GetArrayCell(g_hArrayMaterials, Math_GetRandomInt(0, size-1));
+	int index = g_hArrayMaterials.Get(Math_GetRandomInt(0, size-1));
 	TE_SetupWorldDecal(bulletDestination, index);
 	TE_SendToAll();
 	
