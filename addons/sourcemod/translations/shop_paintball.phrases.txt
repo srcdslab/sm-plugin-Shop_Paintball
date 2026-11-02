@@ -3,21 +3,41 @@
 	"display"
 	{
 		"en"			"PaintBall"
-		"ru"			"Дополнительно"
+		"ru"			"Пейнтбол"
+		"fr"			"PaintBall"
+		"es"			"PaintBall"
+		"de"			"PaintBall"
+		"pt"			"PaintBall"
+		"chi"			"彩弹"
 	}
 	"description"
 	{
 		"en"			"PaintBall bullets"
-		"ru"			"Всякие вещи"
+		"ru"			"Пейнтбольные пули"
+		"fr"			"Balles PaintBall"
+		"es"			"Balas de PaintBall"
+		"de"			"PaintBall-Kugeln"
+		"pt"			"Balas de PaintBall"
+		"chi"			"彩弹子弹"
 	}
 	"paintball"
 	{
 		"en"			"Paintball"
-		"ru"			"Пэйнтбол"
+		"ru"			"Пейнтбол"
+		"fr"			"Paintball"
+		"es"			"Paintball"
+		"de"			"Paintball"
+		"pt"			"Paintball"
+		"chi"			"彩弹"
 	}
 	"paintball_description"
 	{
 		"en"			"Paintball on bullets impact"
-		"ru"			"Пэйнтбол на выстрелах ууль"
+		"ru"			"Пейнтбол в местах попадания пуль"
+		"fr"			"Taches de peinture à l'impact des balles"
+		"es"			"Manchas de pintura al impactar las balas"
+		"de"			"Farbkleckse beim Kugeleinschlag"
+		"pt"			"Manchas de tinta no impacto das balas"
+		"chi"			"子弹命中处留下彩弹痕迹"
 	}
 }
