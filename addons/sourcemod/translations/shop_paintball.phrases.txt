@@ -9,6 +9,12 @@
 		"de"			"PaintBall"
 		"pt"			"PaintBall"
 		"chi"			"彩弹"
+		"pl"			"PaintBall"
+		"tr"			"PaintBall"
+		"it"			"PaintBall"
+		"ua"			"Пейнтбол"
+		"zho"			"彩彈"
+		"cze"			"Paintball"
 	}
 	"description"
 	{
@@ -19,6 +25,12 @@
 		"de"			"PaintBall-Kugeln"
 		"pt"			"Balas de PaintBall"
 		"chi"			"彩弹子弹"
+		"pl"			"Kulki paintballowe"
+		"tr"			"PaintBall mermileri"
+		"it"			"Proiettili PaintBall"
+		"ua"			"Пейнтбольні кулі"
+		"zho"			"彩彈子彈"
+		"cze"			"Paintballové kulky"
 	}
 	"paintball"
 	{
@@ -29,6 +41,12 @@
 		"de"			"Paintball"
 		"pt"			"Paintball"
 		"chi"			"彩弹"
+		"pl"			"Paintball"
+		"tr"			"Paintball"
+		"it"			"Paintball"
+		"ua"			"Пейнтбол"
+		"zho"			"彩彈"
+		"cze"			"Paintball"
 	}
 	"paintball_description"
 	{
@@ -39,5 +57,11 @@
 		"de"			"Farbkleckse beim Kugeleinschlag"
 		"pt"			"Manchas de tinta no impacto das balas"
 		"chi"			"子弹命中处留下彩弹痕迹"
+		"pl"			"Plamy farby w miejscu trafienia pocisków"
+		"tr"			"Mermi isabet ettiğinde boya lekeleri"
+		"it"			"Schizzi di vernice all'impatto dei proiettili"
+		"ua"			"Фарба на місці влучання куль"
+		"zho"			"子彈命中時濺出彩漆"
+		"cze"			"Skvrny barvy při dopadu kulek"
 	}
 }
